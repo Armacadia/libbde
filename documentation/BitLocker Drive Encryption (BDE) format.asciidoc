@@ -50,42 +50,39 @@ in the section entitled "GNU Free Documentation License".
 | 0.0.4 | J.B. Metz | June 2013 | Additional information regarding Windows 8 with thanks to T. Duc Nguyen.
 | 0.0.5 | J.B. Metz | June 2013 | Additional information regarding encryption method MSB with thanks to S. Hansen.
 | 0.0.6 | J.B. Metz | June 2014 | Additional information regarding encryption method MSB with thanks to J. Van Tubbergh.
-| 0.0.7 | J.B. Metz | October 2014 | Switched to asccidoc format.
+| 0.0.7 | J.B. Metz | October 2014 | Switched to asciidoc format.
 | 0.0.8 | J.B. Metz | December 2015 | Additional information regarding AES-XTS encryption method with thanks to github user anocs.
 | 0.0.9 | J.B. Metz | September 2017 | Additional information regarding AES-XTS encryption method.
 | 0.0.10 | J.B. Metz | August 2018 | Additional information regarding volume header size. +
 Additional information regarding BitLocker To Go Application files with thanks to K. Sung.
 | 0.0.11 | J.B. Metz | December 2018 | Corrected typos
 | 0.0.12 | J.B. Metz | February 2019 | Additional information regarding BitLocker Used Disk Space Only encryption format with thanks to M. Bulhakov.
-| 0.0.13 | J.B. Metz | December 2020 | Additional information BEK file format.
-| 0.0.14 | J.B. Metz | June 2021 | Additional information about unencrypted volume.
+| 0.0.13 | J.B. Metz | December 2020 | Additional information on the BEK file format.
+| 0.0.14 | J.B. Metz | June 2021 | Additional information about unencrypted volumes.
 | 0.0.15 | J.B. Metz | January 2022 | Changes to formatting.
 | 0.0.16 | J.B. Metz | February 2022 | Additional information about metadata version 3.
+| 0.0.17 | Armacadia | January 2025 | Minor wording changes and clarifications.
 |===
 
 :numbered:
 == Overview
 
-BitLocker Drive Encrypting (BDE) is the volume encryption used by Microsoft
-Windows as of Vista. There are multiple versions of BitLocker Drive Encryption
-(BDE):
+BitLocker Drive Encryption (BDE) is the volume encryption technology available in Microsoft
+Windows starting with Windows Vista. There are multiple versions of BitLocker Drive Encryption (BDE):
 
 * BitLocker Windows Vista
-* [yellow-background]*TODO: BitLocker Windows 2008*
+* [yellow-background]*TODO: BitLocker Windows Server 2008*
 * BitLocker Windows 7
 * BitLocker To Go
 * BitLocker Windows 8
 * BitLocker Windows 10
 
-Both BitLocker Windows Vista and BitLocker Windows 7 are intended to encrypt
-NTFS volumes on fixed storage media, like harddisks. BitLocker To Go was
+BitLocker is intended to encrypt NTFS volumes on fixed storage media, like hard disks. BitLocker To Go was
 introduced in Windows 7 and is intended to encrypt removable drives, with e.g.
-FAT file systems. NTFS volumes on removable drives are treated as NTFS volumes
+FAT file systems. NTFS volumes on removable drives are treated like NTFS volumes
 on fixed storage media.
 
-The BitLocker identifier (GUID) is 4967d63b-2e29-4ad8-8399-f6a339e3d001.
-
-BitLocker To Go uses 4967d63b-2e29-4ad8-8399-f6a339e3d01.
+The BitLocker and BitLocker To Go identifier (GUID) is 4967d63b-2e29-4ad8-8399-f6a339e3d001.
 
 BitLocker Used Disk Space Only encryption uses
 92a84d3b-dd80-4d0e-9e4e-b1e3284eaed8.
@@ -95,11 +92,11 @@ BitLocker Used Disk Space Only encryption uses
 ==== Windows Vista
 
 In Windows Vista the System Volume Information folder of the unencrypted volume
-contain several file entries for the BitLocker metadata blocks:
+contains several file entries for the BitLocker metadata blocks:
 
-* FVE.{%GUID%}.[123] maps the blocks that contain the FVE metadata. Typically 16384 bytes of size.
+* FVE.{%GUID%}.[123] maps the blocks that contain the FVE metadata. Typically 16384 bytes in size.
 
-The contents of the metadata files, on an unencrypted volume, consists of
+The contents of the metadata files, on an unencrypted volume, consist of
 0-byte values. It is assumed that these files are used to prevent the BitLocker
 metadata to be overwritten.
 
@@ -109,12 +106,12 @@ EnCase (at least version 6.18) does not zero out these metadata areas.
 ==== Windows 7
 
 In Windows 7 the System Volume Information folder of the unencrypted volume
-contain several file entries for the BitLocker metadata blocks:
+contains several file entries for the BitLocker metadata blocks:
 
-* FVE2.{%GUID%} maps the block that contains the encrypted volume header. Typically 8192 bytes of size.
-* FVE2.{%GUID%}.[123] maps the blocks that contain the FVE metadata. Typically 65536 bytes of size.
+* FVE2.{%GUID%} maps the block that contains the encrypted volume header. Typically 8192 bytes in size.
+* FVE2.{%GUID%}.[123] maps the blocks that contain the FVE metadata. Typically 65536 bytes in size.
 
-The contents of the metadata files, on an unencrypted volume, consists of
+The contents of the metadata files, on an unencrypted volume, consist of
 0-byte values. It is assumed that these files are used to prevent the BitLocker
 metadata to be overwritten.
 
@@ -123,15 +120,15 @@ EnCase (at least version 6.18) does not zero out these metadata areas.
 
 ==== To Go
 
-BitLocker To Go uses a hybrid volume that has a encrypted and an unencrypted
-part. The unencrypted part contains various files. Application files for the
-BitLocker To Go helper application; which can also be found in
+BitLocker To Go uses a hybrid volume format that has an encrypted and an unencrypted
+parts. The unencrypted part contains various files for the
+BitLocker To Go helper application; these can also be found in
 C:\Windows\BitLockerDiscoveryVolumeContents\
 
-* "COV 0000. BL" maps the block that contains the BitLocker To Go GUID and the offsets to the metadata. Typically 32768 bytes of size.
+* "COV 0000. BL" maps the block that contains the BitLocker To Go GUID and the offsets to the metadata. Typically 32768 bytes in size.
 * "COV 0000. ER" maps the encrypted data.
 * "PAD 0000. PD" maps padding.
-* "PAD 0000. NG" [yellow-background]*unknown*. Typically 0 bytes of size.
+* "PAD 0000. NG" [yellow-background]*unknown*. Typically 0 bytes in size.
 
 [NOTE]
 It has been observed that the "COV 0000. ER" and "PAD 0000. NG" files can be
@@ -139,21 +136,21 @@ split in multiple 4294934528 byte (4 GiB - 32768) on a FAT32 volume, such as
 "COV 0001. ER", "COV 0002. ER", ... or "PAD 0001. NG", ...
 
 [NOTE]
-It has been suggested that the purpose of the "PAD 0000. NG" are meant to fill
+It has been suggested that the purpose of the "PAD 0000. NG" files is to fill
 the root directory with entries so that no new files may be created on the
 volume.
 
 == Keys
 
-To encrypt storage media BitLocker uses different kind of keys.
+To encrypt storage media BitLocker uses multiple kinds of keys.
 
 === Volume Master Key (VMK)
 
-The Volume Master Key (VMK) is 256-bit of size and is stored in multiple FVE
+The Volume Master Key (VMK) is 256-bit in size and is stored in multiple FVE
 Volume Master Key (VMK) structures. The VMK is stored encrypted with either the
 recovery key, external key, or the TPM.
 
-It is also possible that the VMK is stored unencrypted which is referred to as
+It is also possible for the VMK to be stored unencrypted which is referred to as
 clear key.
 
 === Full Volume Encryption Key (FVEK)
@@ -162,12 +159,12 @@ The Full Volume Encryption Key (FVEK) is stored encrypted with the Volume
 Master Key (VMK). The size of the FVEK is dependent on the encryption method
 used:
 
-* For AES 128-bit the key is 128-bit of size
-* For AES 256-bit the key is 256-bit of size
+* For AES 128-bit the key is 128 bit in size
+* For AES 256-bit the key is 256 bit in size
 
-When Elephant Diffuser is used the key data of the structure that hold the FVEK
-is always 512-bit of size. The First 256-bit are reserved for the FVEK and the
-other 256-bit for the TWEAK key. Only 128-bit of the 256-bits are used when the
+When Elephant Diffuser is used, the key data of the structure that holds the FVEK
+is always 512-bit in size. The first 256 bits are reserved for the FVEK and the
+other 256 bits for the TWEAK key. Only 128 of the 256 bits are used when the
 encryption method is AES 128-bit.
 
 === TWEAK key
@@ -175,13 +172,13 @@ encryption method is AES 128-bit.
 The TWEAK is stored encrypted with the Volume Master Key (VMK). The size of the
 TWEAK key is dependent on the encryption method used:
 
-* For AES 128-bit the key is 128-bit of size
-* For AES 256-bit the key is 256-bit of size
+* For AES 128-bit the key is 128 bit in size
+* For AES 256-bit the key is 256 bit in size
 
 The TWEAK key is only present when Elephant Diffuser is used. The TWEAK key is
-stored in the key data of the structure that hold the Full Volume Encryption
-Key (FVEK) is always 512-bit of size. The First 256-bit are reserved for the
-FVEK and the other 256-bit for the TWEAK key. Only 128-bit of the 256-bits are
+stored in the key data of the structure that holds the Full Volume Encryption
+Key (FVEK) and is always 512 bits long. The first 256 bits are reserved for the
+FVEK and the other 256 bits for the TWEAK key. Only 128 of 256 bits are
 used when the encryption method is AES 128-bit.
 
 === Recovery key
@@ -222,8 +219,8 @@ Loop for 1048576 (0x100000) times:
 * calculate the SHA256 of the structure and update the last SHA256 value
 * increment the count by 1
 
-The last SHA256 value contains the 256-bit key which is recovery key that can
-unlock the recovery key protected Volume Master Key (VMK).
+The last SHA256 value contains the 256-bit key which is the recovery key that can
+unlock the recovery key-protected Volume Master Key (VMK).
 
 === Clear key
 
@@ -263,22 +260,22 @@ Calculate the SHA256 of the user password.
 Calculate the SHA256 of the SHA256 of the user password, and set it as the
 initial SHA256 value.
 
-The salt is stored on disk in the stretch key which is stored in the user key
-(or password) protected Volume Master Key (VMK).
+The salt is stored on disk in the stretch key, which is stored in the user key
+(or password)-protected Volume Master Key (VMK).
 
 Loop for 1048576 (0x100000) times:
 
 * calculate the SHA256 of the structure and update the last SHA256 value
 * increment the count by 1
 
-The last SHA256 value contains the 256-bit key which is user key that can
-unlock the user key (or password) protected Volume Master Key (VMK).
+The last SHA256 value contains the 256-bit key which is the user key that can
+unlock the user key (or password)-protected Volume Master Key (VMK).
 
 == Encryption methods
 
-BitLocker uses different kind of encryption methods. To encrypt the sector data
-it either uses AES-CBC with or without Elephant Elephant Diffuser. To encrypt
-the key data BitLocker uses AES-CCM.
+BitLocker uses different kinds of encryption methods. To encrypt the sector data
+it uses AES-CBC either with or without Elephant Diffuser. To encrypt
+the key data, BitLocker uses AES-CCM.
 
 === AES-CBC
 
@@ -295,15 +292,15 @@ the offset of the sector relative from the start of the volume.
 Encryption:
 
 * XOR with sector key
-* Elephant Elephant Diffuser A
-* Elephant Elephant Diffuser B
+* Elephant Diffuser A
+* Elephant Diffuser B
 * AES-CBC with FVEK
 
 Decryption:
 
 * AES-CBC with FVEK
-* Elephant Elephant Diffuser B
-* Elephant Elephant Diffuser A
+* Elephant Diffuser B
+* Elephant Diffuser A
 * XOR with sector key
 
 The initialization vector of the AES-CBC is the sector offset AES-ECB encrypted
@@ -312,8 +309,8 @@ the offset of the sector relative from the start of the volume.
 
 The sector key 32-byte of size and contains:
 
-* the lower 16-byte contain a little-endian version of the offset of the sector, relative from the start of the volume, AES-ECB encrypted with the TWEAK key
-* the upper 16-byte contain a 16-byte little-endian version of the offset of the sector, relative from the start of the volume, with the most upper bit set (or upper byte set to 0x80) AES-ECB encrypted with the TWEAK key
+* the lower 16 bytes contain a little-endian version of the offset of the sector, relative from the start of the volume, AES-ECB encrypted with the TWEAK key
+* the upper 16 bytes contain a 16-byte little-endian version of the offset of the sector, relative from the start of the volume, with the most upper bit set (or upper byte set to 0x80) AES-ECB encrypted with the TWEAK key
 
 === AES-CCM
 
@@ -354,7 +351,7 @@ namely
 
 The 15 sectors directly following the first sector are also unencrypted.
 
-The sectors that contain the BDE metadata are shown as empty sectors;
+The sectors that contain the BDE metadata are shown as empty sectors,
 containing 0-byte values.
 
 [NOTE]
@@ -376,17 +373,19 @@ EnCase (at least version 6.18) does not zero out these metadata areas.
 ==== BitLocker Windows 10
 
 In later versions of Bitlocker Windows 10 the <<fve_volume_header_block,FVE Volume header block>>
-no longer is present. The number of volume header sectors in the
+is no longer present. The number of volume header sectors in the
 <<fve_metadata_block_header2,FVE metadata block header>> can be used to
 determine the volume header size. It is commonly 8192 bytes an size, entailing
 the first 16 sectors.
 
 == Volume header
+[NOTE]
+Multi-byte values in the tables below are presented as big endian (that is, for example, the "Sectors per FAT" attribute at offset 36 for BitLocker Windows 7 will be seen as e0 1f in disk editors). 
 
 === BitLocker Windows Vista
 
 The BitLocker Windows Vista volume header is similar to NTFS volume header. The
-differences have been emphasized in bold. The volume header is 512 bytes of
+differences are emphasized in bold. The volume header is 512 bytes in
 size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -431,9 +430,9 @@ The number of sectors can be 1 less then the value indicated in the partition ta
 
 === BitLocker Windows 7 and later
 
-The BitLocker Windows 7 (and later) volume header less similar to NTFS volume
+The BitLocker Windows 7 (and later) volume header is less similar to the NTFS volume
 header than the BitLocker Windows Vista volume header. The differences between
-the versions have been emphasized in bold. The volume header is 512 bytes of
+the versions are emphasized in bold. The volume header is 512 bytes in
 size and consists of:
 
 [cols="1,1,1,5",options="header"]
@@ -474,18 +473,18 @@ Contains the volume start sector number
 | *160* | *16* | | *BitLocker identifier* +
 contains a GUID
 | *176* | *8* | | *FVE metadata block 1 offset* +
-Contains an offset relative to the start of the volume
+Offset in bytes from the start of the volume, little-endian
 | *184* | *8* | | *FVE metadata block 2 offset* +
-Contains an offset relative to the start of the volume
+Offset in bytes from the start of the volume, little-endian
 | *192* | *8* | | *FVE metadata block 3 offset* +
-Contains an offset relative to the start of the volume
+Offset in bytes from the start of the volume, little-endian
 | *200* | *307* | | [yellow-background]*Unknown (part of bootcode)*
 | *507* | *3* | | [yellow-background]*Unknown*
 | 510 | 2 | 0x55 0xaa | Sector signature
 |===
 
 [NOTE]
-The number of sectors can be 1 less then the value indicated in the partition
+The number of sectors can be less by 1 than the value indicated in the partition
 table.
 
 [yellow-background]*TODO check highlighted values*
@@ -494,8 +493,8 @@ table.
 
 BitLocker To Go on an NTFS volume is similar to BitLocker Windows 7. The
 BitLocker Windows To Go volume header for a FAT volume is similar to FAT32
-volume header. The differences have been emphasized in bold. The volume header
-is 512 bytes of size and consists of:
+volume header. The differences are emphasized in bold. The volume header
+is 512 bytes in size and consists of:
 
 [cols="1,1,1,5",options="header"]
 |===
@@ -534,11 +533,11 @@ is 512 bytes of size and consists of:
 | *424* | *16* | | *BitLocker identifier* +
 contains a GUID
 | *440* | *8* | | *FVE metadata block 1 offset* +
-Contains an offset relative to the start of the volume
+Offset in bytes from the start of the volume, little-endian
 | *448* | *8* | | *FVE metadata block 2 offset* +
-Contains an offset relative to the start of the volume
+Offset in bytes from the start of the volume, little-endian
 | *456* | *8* | | *FVE metadata block 3 offset* +
-Contains an offset relative to the start of the volume
+Offset in bytes from the start of the volume, little-endian
 | 464 | 46 | | [yellow-background]*Unknown*
 | 510 | 2 | 0x55 0xaa | Sector signature
 |===
@@ -559,7 +558,7 @@ consists of:
 
 ==== FVE metadata block header version 1 - Windows Vista
 
-The FVE metadata block header version 1 is 64 bytes of size and consists of:
+The FVE metadata block header version 1 is 64 bytes in size and consists of:
 
 [cols="1,1,1,5",options="header"]
 |===
@@ -573,17 +572,17 @@ The FVE metadata block header version 1 is 64 bytes of size and consists of:
 0x04 commonly
 | 16 | 16 | 0 | [yellow-background]*Unknown (empty values)*
 | 32 | 8 | | FVE metadata block 1 offset +
-Contains an offset relative to the start of the volume
+Offset in bytes from the start of the volume, little-endian
 | 40 | 8 | | FVE metadata block 2 offset +
-Contains an offset relative to the start of the volume
+Offset in bytes from the start of the volume, little-endian
 | 48 | 8 | | FVE metadata block 3 offset +
-Contains an offset relative to the start of the volume
+Offset in bytes from the start of the volume, little-endian
 | 56 | 8 | | MFT mirror cluster block number
 |===
 
 ==== [[fve_metadata_block_header2]]FVE metadata block header version 2 – Windows 7 and later
 
-The FVE metadata block header version 2 is 64 bytes of size and consists of:
+The FVE metadata block header version 2 is 64 bytes in size and consists of:
 
 [cols="1,1,1,5",options="header"]
 |===
@@ -603,22 +602,22 @@ Contains the number of bytes
 | 28 | 4 | | Number of volume header sectors +
 Contains the number of sectors
 | 32 | 8 | | FVE metadata block 1 offset +
-Contains an offset relative to the start of the volume
+Offset in bytes from the start of the volume, little-endian
 | 40 | 8 | | FVE metadata block 2 offset +
-Contains an offset relative to the start of the volume
+Offset in bytes from the start of the volume, little-endian
 | 48 | 8 | | FVE metadata block 3 offset +
-Contains an offset relative to the start of the volume
+Offset in bytes from the start of the volume, little-endian
 | *56* | *8* | | *Volume header offset* +
-*Contains an offset relative to the start of the volume*
+*Offset in bytes from the start of the volume, little-endian*
 |===
 
-When decrypting BitLocker will decrypt from the back to the front. The
+When decrypting BitLocker will decrypt from the end to the start of the volume. The
 encrypted volume size therefore contains the number of bytes of the volume that
 are still encrypted (or need to be decrypted).
 
 === FVE metadata header (version 1)
 
-The FVE metadata header (version 1) is 48 bytes of size and consists of:
+The FVE metadata header (version 1) is 48 bytes in size and consists of:
 
 [cols="1,1,1,5",options="header"]
 |===
@@ -694,8 +693,8 @@ Note: version is typically 1 but 3 has been seen for VMK FVE metadata entry in c
 | | |
 | 0x0006 | | Startup key
 | 0x0007 | | Description (Drive label) +
-Contains computer name, volume name and date +
-[yellow-background]*Is the date format dependent on the locale MM/DD/YYYY?*
+Contains name volume creator system name, volume name and date +
+At least on Windows 7, date format is dependent on the system locale setting 
 | | |
 | 0x000b | | [yellow-background]*Unknown* +
 [yellow-background]*Backup of the Full Volume Encryption Key (FVEK)?*
@@ -871,9 +870,9 @@ Key protector types defined by the GetKeyProtectorType function documenation
 1 Trusted Platform Module (TPM)
 2 External key
 3 Numerical password
-4 TPM And PIN
-5 TPM And Startup Key
-6 TPM And PIN And Startup Key
+4 TPM + PIN
+5 TPM + Startup Key
+6 TPM + PIN + Startup Key
 7 Public Key
 8 Passphrase
 9 TPM Certificate
