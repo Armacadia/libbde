@@ -92,12 +92,12 @@ BitLocker Used Disk Space Only encryption uses
 
 ==== Windows Vista
 
-In Windows Vista the System Volume Information folder of the unencrypted volume
+In Windows Vista the System Volume Information folder of an unlocked volume
 contains several file entries for the BitLocker metadata blocks:
 
 * FVE.{%GUID%}.[123] maps the blocks that contain the FVE metadata. Typically 16384 bytes in size.
 
-The contents of the metadata files, on an unencrypted volume, consist of
+The contents of those metadata files on unlocked volumes consist of
 0-byte values. It is assumed that these files are used to prevent the BitLocker
 metadata to be overwritten.
 
@@ -106,13 +106,13 @@ EnCase (at least version 6.18) does not zero out these metadata areas.
 
 ==== Windows 7
 
-In Windows 7 the System Volume Information folder of the unencrypted volume
+In Windows 7 the System Volume Information folder of an unlocked volume
 contains several file entries for the BitLocker metadata blocks:
 
 * FVE2.{%GUID%} maps the block that contains the encrypted volume header. Typically 8192 bytes in size.
 * FVE2.{%GUID%}.[123] maps the blocks that contain the FVE metadata. Typically 65536 bytes in size.
 
-The contents of the metadata files, on an unencrypted volume, consist of
+The contents of those metadata files on unlocked volumes consist of
 0-byte values. It is assumed that these files are used to prevent the BitLocker
 metadata to be overwritten.
 
@@ -121,7 +121,7 @@ EnCase (at least version 6.18) does not zero out these metadata areas.
 
 ==== To Go
 
-BitLocker To Go uses a hybrid volume format that has an encrypted and an unencrypted
+BitLocker To Go on FAT volumes uses a hybrid volume format that has an encrypted and unencrypted
 parts. The unencrypted part contains various files for the
 BitLocker To Go helper application; these can also be found in
 C:\Windows\BitLockerDiscoveryVolumeContents\
@@ -135,6 +135,14 @@ C:\Windows\BitLockerDiscoveryVolumeContents\
 It has been observed that the "COV 0000. ER" files can be split in
 multiple 4294934528 byte (4 GiB - 32768) on a FAT32 volume, such as
 "COV 0001. ER", "COV 0002. ER", ...
+
+The FVE2 file can grow at least up to several megabytes (tested on a FAT32 volume).
+
+[NOTE]
+The GUIDs seem to differ depending on the OS that the drive was used on. When encrypted on Windows 7, the Volume System Information
+folder would only contain FVE2.{24e6f0ae-6a00-4f73-984b-75ce9942852d} and FVE2.{e40ad34d-dae9-4bc7-95bd-b16218c10f72}.[123].
+If the same drive is later used on another version of Windows, it might create extra "FVE2" files with different GUIDs
+(also see their creation and modification dates). [yellow-background]*TODO: document the exact GUIDs of other Windows versions
 
 == Keys
 
@@ -221,7 +229,7 @@ unlock the recovery key-protected Volume Master Key (VMK).
 === Clear key
 
 The clear key is an unprotected 256-bit key stored on the volume to decrypt the
-VMK. It is used when the encrypted volume is being decrypted.
+VMK. It is used when the encrypted volume is being unlocked.
 
 === Startup key
 
@@ -234,9 +242,9 @@ identified a by a different key identifier.
 === User key
 
 BitLocker To Go provides for a user password (or passphrase) to unlock the
-encrypted data. The user password is used to determine a user key.
+encrypted data. The user password is used to determine the user key.
 
-[yellow-background]*Check this: the password can be maximal 49 characters in size.*
+As of Windows 7, the maximum password length is 256 characters.
 
 Convert the user password into a UTF16 little-endian string.
 
@@ -279,7 +287,7 @@ Both encryption and decryption use:
 
 * AES-CBC with FVEK decryption of sector data
 
-The initialization vector of the AES-CBC is the sector offset AES-ECB encrypted
+The initialization vector of AES-CBC is the sector offset AES-ECB encrypted
 with the FVEK stored as a 16-byte little-endian value. The sector offset is
 the offset of the sector relative from the start of the volume.
 
@@ -299,11 +307,11 @@ Decryption:
 * Elephant Diffuser A
 * XOR with sector key
 
-The initialization vector of the AES-CBC is the sector offset AES-ECB encrypted
+The initialization vector of AES-CBC is the sector offset AES-ECB encrypted
 with the FVEK stored as a 16-byte little-endian value. The sector offset is
 the offset of the sector relative from the start of the volume.
 
-The sector key 32-byte of size and contains:
+The sector key is 32 bytes in size and contains:
 
 * the lower 16 bytes contain a little-endian version of the offset of the sector, relative from the start of the volume, AES-ECB encrypted with the TWEAK key
 * the upper 16 bytes contain a 16-byte little-endian version of the offset of the sector, relative from the start of the volume, with the most upper bit set (or upper byte set to 0x80) AES-ECB encrypted with the TWEAK key
@@ -320,13 +328,13 @@ Both encryption and decryption use:
 
 * AES-XTS with FVEK decryption of sector data
 
-The initialization vector of the AES-XTS is the sector number stored as a
+The initialization vector of AES-XTS is the sector number stored as a
 16-byte little-endian value. The sector number is the offset of the sector
 relative from the start of the volume divided by the sector size.
 
 === Elephant Diffuser
 
-The Elephant Diffuser A and B variants are described in `[FERGUSON06]`.
+The A and B Elephant Diffuser variants are described in `[FERGUSON06]`.
 
 === Virtual sector(s)
 
@@ -343,7 +351,7 @@ sector is reconstructed by replacing values in the BitLocker Volume header,
 namely
 
 * replacing the "File system signature" with "NTFS\x20\x20\x20\x20"
-* replacing the "FVE metadata block 1 cluster block number" with the "MTF mirror cluster block number"
+* replacing the "FVE metadata block 1 cluster block number" with the "MFT mirror cluster block number"
 
 The 15 sectors directly following the first sector are also unencrypted.
 
@@ -357,8 +365,8 @@ EnCase (at least version 6.18) does not zero out these metadata areas.
 
 Both BitLocker Windows 7 and To Go store an encrypted version of the
 unencrypted first sectors in a specific location. This location is defined in
-the <<fve_volume_header_block,FVE Volume header block>>. It is commonly 8192
-bytes an size, entailing the first 16 sectors.
+the <<fve_volume_header_block,FVE Volume header block>>. It is commonly 8192 bytes
+in size, entailing the first 16 sectors.
 
 The sectors that contain the encrypted volume header and the BDE metadata are
 shown as empty sectors; containing 0-byte values.
@@ -368,10 +376,10 @@ EnCase (at least version 6.18) does not zero out these metadata areas.
 
 ==== BitLocker Windows 10
 
-In later versions of Bitlocker Windows 10 the <<fve_volume_header_block,FVE Volume header block>>
+In later versions of BitLocker Windows 10 the <<fve_volume_header_block,FVE Volume header block>>
 is no longer present. The number of volume header sectors in the
 <<fve_metadata_block_header2,FVE metadata block header>> can be used to
-determine the volume header size. It is commonly 8192 bytes an size, entailing
+determine the volume header size. It is commonly 8192 bytes in size, entailing
 the first 16 sectors.
 
 == Volume header
@@ -380,7 +388,7 @@ Multi-byte values in the tables below are presented as big endian (that is, for 
 
 === BitLocker Windows Vista
 
-The BitLocker Windows Vista volume header is similar to NTFS volume header. The
+The BitLocker Windows Vista volume header is similar to a regular NTFS volume header. The
 differences are emphasized in bold. The volume header is 512 bytes in
 size and consists of:
 
@@ -488,7 +496,7 @@ table.
 === BitLocker To Go
 
 BitLocker To Go on an NTFS volume is similar to BitLocker Windows 7. The
-BitLocker Windows To Go volume header for a FAT volume is similar to FAT32
+BitLocker Windows To Go volume header for a FAT volume is similar to a FAT32
 volume header. The differences are emphasized in bold. The volume header
 is 512 bytes in size and consists of:
 
@@ -588,10 +596,10 @@ The FVE metadata block header version 2 is 64 bytes in size and consists of:
 | 10 | 2 | 2 | Version
 | 12 | 2 | | [yellow-background]*Unknown* +
 0x04 commonly +
-0x05 in partial decrypted volume (protection status?)
+0x05 on a partially decrypted volume (protection status?)
 | 14 | 2 | | [yellow-background]*Unknown copy* +
 0x04 commonly +
-0x01 in partial decrypted volume
+0x01 on a partially decrypted volume
 | 16 | 8 | | Encrypted volume size +
 Contains the number of bytes
 | 24 | 4 | | [yellow-background]*Unknown*
