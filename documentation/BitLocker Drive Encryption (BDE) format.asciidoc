@@ -78,9 +78,10 @@ Windows starting with Windows Vista. There are multiple versions of BitLocker Dr
 * BitLocker Windows 10
 
 BitLocker is intended to encrypt NTFS volumes on fixed storage media, like hard disks. BitLocker To Go was
-introduced in Windows 7 and is intended to encrypt removable drives, with e.g.
-FAT file systems. NTFS volumes on removable drives are treated like NTFS volumes
-on fixed storage media.
+introduced in Windows 7 and is intended to encrypt removable drives, with e.g. FAT file systems.
+NTFS volumes on removable drives are treated like NTFS volumes on fixed storage media, that is,
+the whole volume is encrypted instead of creating containers on the existing volume, like it does
+with FAT32-formatted removable drives.
 
 The BitLocker and BitLocker To Go identifier (GUID) is 4967d63b-2e29-4ad8-8399-f6a339e3d001.
 
@@ -125,20 +126,15 @@ parts. The unencrypted part contains various files for the
 BitLocker To Go helper application; these can also be found in
 C:\Windows\BitLockerDiscoveryVolumeContents\
 
-* "COV 0000. BL" maps the block that contains the BitLocker To Go GUID and the offsets to the metadata. Typically 32768 bytes in size.
-* "COV 0000. ER" maps the encrypted data.
-* "PAD 0000. PD" maps padding.
-* "PAD 0000. NG" [yellow-background]*unknown*. Typically 0 bytes in size.
+* "COV 0000. BL": maps the block that contains the BitLocker To Go GUID and the offsets to the metadata. Typically 32768 bytes in size.
+* "COV 0000. ER": maps the encrypted data.
+* "PAD 0000. PD": maps padding.
+* "PAD 0000. NG": empty files used to fill the root directory with entries, so that no new files may be created on the volume.
 
 [NOTE]
-It has been observed that the "COV 0000. ER" and "PAD 0000. NG" files can be
-split in multiple 4294934528 byte (4 GiB - 32768) on a FAT32 volume, such as
-"COV 0001. ER", "COV 0002. ER", ... or "PAD 0001. NG", ...
-
-[NOTE]
-It has been suggested that the purpose of the "PAD 0000. NG" files is to fill
-the root directory with entries so that no new files may be created on the
-volume.
+It has been observed that the "COV 0000. ER" files can be split in
+multiple 4294934528 byte (4 GiB - 32768) on a FAT32 volume, such as
+"COV 0001. ER", "COV 0002. ER", ...
 
 == Keys
 
