@@ -556,7 +556,9 @@ consists of:
 * a block header
 * a metadata header
 * an array of metadata entries
-* padding (0-byte values) (seen in Windows 8)
+* padding (0-byte values) (at least in Windows 7, 8)
+
+At least in Windows 7, both for BitLocker To Go and BitLocker on fixed drives, the FVE metadata block seems to be 128 sectors long.
 
 === FVE metadata block header
 
@@ -601,7 +603,7 @@ The FVE metadata block header version 2 is 64 bytes in size and consists of:
 0x04 commonly +
 0x01 on a partially decrypted volume
 | 16 | 8 | | Encrypted volume size +
-Contains the number of bytes
+Volume length in bytes, little-endian
 | 24 | 4 | | [yellow-background]*Unknown*
 | 28 | 4 | | Number of volume header sectors +
 Contains the number of sectors
